@@ -1,7 +1,7 @@
 /*
  *  @file    talker.cpp
  *  @author  Santosh Kesani
- *  @brief   Implementing the talker publisher
+ *  @brief   Implementing the talker publisher and Service
  *  @License BSD 3 license
  * 
  *  Copyright (c) 2020, SantoshKesani
@@ -36,22 +36,77 @@
  */
 
 #include <sstream>
-
+#include <string>
 #include "ros/ros.h"
 #include "std_msgs/String.h"
+#include "beginner_tutorials/updateService.h"
 
+extern std::string newMsg = "Default Message";
+
+/**
+ * @brief      Updating default message
+ *
+ * @param      req   Service request
+ * @param      res   Service response
+ *
+ * @return     { true on service execution }
+ */
+bool update(beginner_tutorials::updateService::Request &req,
+            beginner_tutorials::updateService::Response &res) {
+  res.updateString = req.newString;
+  ROS_WARN_STREAM("Updating the string to user input");
+  newMsg = res.updateString;
+  return true;
+}
+
+
+/**
+ * @brief      main function to handle ros publisher and service
+ *             with all logging levels
+ *
+ * @param[in]  argc  The count of arguments
+ * @param      argv  The arguments array
+ *
+ * @return     { 0 on success }
+ */
 int main(int argc, char **argv) {
+  // Intializing ROS Node
   ros::init(argc, argv, "talker");
+  // Intializing NodeHandle
   ros::NodeHandle n;
+  // Creating a publisher node
   ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
-  ros::Rate loop_rate(10);
+  // Creating a Service Node
+  ros::ServiceServer server = n.advertiseService("new_string", update);
+
+  // ROS loop rate
+  double loopRate;  // Variable to store input frequency
+  if (argc == 0) {
+    ROS_ERROR_STREAM("loopRate argument is missing");
+    ROS_INFO_STREAM("Setting loop rate to default value");
+    loopRate = 10;
+  } else {
+      n.getParam("/set_freq", loopRate);
+      if (loopRate <= 0) {
+        ROS_FATAL_STREAM("loopRate cannot be negative or zero");
+        ROS_INFO_STREAM("Setting loop rate to default value");
+        loopRate = 10;
+      } else if (loopRate > 200) {
+          ROS_ERROR_STREAM("loop rate is too high");
+          ROS_INFO_STREAM("Setting loop rate to default value");
+          loopRate = 10;
+      } else {
+          ROS_INFO_STREAM("Loop Rate is" << loopRate);
+      }
+  }
+  ros::Rate loop_rate(loopRate);
 
   int count = 0;
   while (ros::ok()) {
     std_msgs::String msg;
 
     std::stringstream ss;
-    ss << "Robots are amazing " << count;
+    ss << newMsg << count;
     msg.data = ss.str();
 
     ROS_INFO("%s", msg.data.c_str());
