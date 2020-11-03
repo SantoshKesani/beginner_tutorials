@@ -55,6 +55,7 @@ bool update(beginner_tutorials::updateService::Request &req,
                beginner_tutorials::updateService::Response &res) {
   
   res.updateString = req.newString;
+  ROS_INFO_STREAM("Updating the string to user input");
   newMsg = res.updateString;
   return true;
 }
@@ -62,6 +63,7 @@ bool update(beginner_tutorials::updateService::Request &req,
 
 /**
  * @brief      main function to handle ros publisher and service
+ *             with all logging levels
  *
  * @param[in]  argc  The count of arguments
  * @param      argv  The arguments array
@@ -79,7 +81,29 @@ int main(int argc, char **argv) {
   ros::ServiceServer server = n.advertiseService("new_string", update);
 
   // ROS loop rate
-  ros::Rate loop_rate(10);
+  double loopRate; // Variable to store input frequency
+  if(argc == 1) {
+    ROS_ERROR_STREAM("loopRate argument is missing");
+    ROS_WARN_STREAM("Setting loop rate to default value");
+    loopRate = 10;
+  }
+  else {
+    n.getParam("/set_freq", loopRate);
+    if(loopRate <= 0) {
+      ROS_FATAL_STREAM("loopRate cannot be negative or zero");
+      ROS_WARN_STREAM("Setting loop rate to default value");
+      loopRate = 10;
+    }
+    else if(loopRate > 200) {
+      ROS_ERROR_STREAM("loop rate is too high");
+      ROS_WARN_STREAM("Setting loop rate to default value");
+      loopRate = 10;
+    }
+    else {
+      ROS_DEBUG_STREAM("Loop Rate is" << loopRate);
+    }
+  }
+  ros::Rate loop_rate(loopRate);
 
   int count = 0;
   while (ros::ok()) {
