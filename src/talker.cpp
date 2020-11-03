@@ -1,7 +1,7 @@
 /*
  *  @file    talker.cpp
  *  @author  Santosh Kesani
- *  @brief   Implementing the talker publisher
+ *  @brief   Implementing the talker publisher and Service
  *  @License BSD 3 license
  * 
  *  Copyright (c) 2020, SantoshKesani
@@ -36,14 +36,49 @@
  */
 
 #include <sstream>
-
+#include <string>
 #include "ros/ros.h"
 #include "std_msgs/String.h"
+#include "beginner_tutorials/updateService.h"
 
+extern std::string newMsg = "Default Message";
+
+/**
+ * @brief      Updating default message
+ *
+ * @param      req   Service request
+ * @param      res   Service response
+ *
+ * @return     { true on service execution }
+ */
+bool update(beginner_tutorials::updateService::Request &req,
+               beginner_tutorials::updateService::Response &res) {
+  
+  res.updateString = req.newString;
+  newMsg = res.updateString;
+  return true;
+}
+
+
+/**
+ * @brief      main function to handle ros publisher and service
+ *
+ * @param[in]  argc  The count of arguments
+ * @param      argv  The arguments array
+ *
+ * @return     { 0 on success }
+ */
 int main(int argc, char **argv) {
+  // Intializing ROS Node
   ros::init(argc, argv, "talker");
+  // Intializing NodeHandle
   ros::NodeHandle n;
+  // Creating a publisher node
   ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
+  // Creating a Service Node
+  ros::ServiceServer server = n.advertiseService("new_string", update);
+
+  // ROS loop rate
   ros::Rate loop_rate(10);
 
   int count = 0;
@@ -51,7 +86,7 @@ int main(int argc, char **argv) {
     std_msgs::String msg;
 
     std::stringstream ss;
-    ss << "Robots are amazing " << count;
+    ss << newMsg << count;
     msg.data = ss.str();
 
     ROS_INFO("%s", msg.data.c_str());
