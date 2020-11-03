@@ -54,7 +54,7 @@ extern std::string newMsg = "Default Message";
 bool update(beginner_tutorials::updateService::Request &req,
             beginner_tutorials::updateService::Response &res) {
   res.updateString = req.newString;
-  ROS_INFO_STREAM("Updating the string to user input");
+  ROS_WARN_STREAM("Updating the string to user input");
   newMsg = res.updateString;
   return true;
 }
@@ -83,20 +83,20 @@ int main(int argc, char **argv) {
   double loopRate;  // Variable to store input frequency
   if (argc == 0) {
     ROS_ERROR_STREAM("loopRate argument is missing");
-    ROS_WARN_STREAM("Setting loop rate to default value");
+    ROS_INFO_STREAM("Setting loop rate to default value");
     loopRate = 10;
   } else {
       n.getParam("/set_freq", loopRate);
       if (loopRate <= 0) {
         ROS_FATAL_STREAM("loopRate cannot be negative or zero");
-        ROS_WARN_STREAM("Setting loop rate to default value");
+        ROS_INFO_STREAM("Setting loop rate to default value");
         loopRate = 10;
       } else if (loopRate > 200) {
           ROS_ERROR_STREAM("loop rate is too high");
-          ROS_WARN_STREAM("Setting loop rate to default value");
+          ROS_INFO_STREAM("Setting loop rate to default value");
           loopRate = 10;
       } else {
-          ROS_DEBUG_STREAM("Loop Rate is" << loopRate);
+          ROS_INFO_STREAM("Loop Rate is" << loopRate);
       }
   }
   ros::Rate loop_rate(loopRate);
