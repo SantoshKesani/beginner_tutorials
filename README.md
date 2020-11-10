@@ -15,6 +15,7 @@ The package has the following dependencies:
 - roscpp
 - std_msgs
 - message_generation
+- tf
 
 ## Build method
 For the package, you must create and build the catkin workspace as follows in the command line:
@@ -68,7 +69,6 @@ catkin_make run_tests_beginner_tutorials
 ```
 In Terminal-1: roscore
 In Terminal-2: roslaunch beginner_tutorials tlnodes.launch set_freq:="set the loop rate(int) rosbagRecorder:=true"
-
 ```
 2) Playing: To replay the rosbag data collected, run the following command while the listener node is running in another terminal.(Make sure you source the workspace):
 ```
