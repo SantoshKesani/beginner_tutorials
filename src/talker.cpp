@@ -1,7 +1,7 @@
 /*
  *  @file    talker.cpp
  *  @author  Santosh Kesani
- *  @brief   Implementing the talker publisher and Service
+ *  @brief   Implementing the talker & publisher, Service and tranformations
  *  @License BSD 3 license
  * 
  *  Copyright (c) 2020, SantoshKesani
@@ -40,6 +40,7 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include "beginner_tutorials/updateService.h"
+#include <tf/transform_broadcaster.h>
 
 extern std::string newMsg = "Default Message";
 
@@ -78,6 +79,10 @@ int main(int argc, char **argv) {
   ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
   // Creating a Service Node
   ros::ServiceServer server = n.advertiseService("new_string", update);
+  // Intialization of tf broadcaster, transform and Quaternion
+  static tf::TransformBroadcaster br;
+  tf::Transform transform;
+  tf::Quaternion q;
 
   // ROS loop rate
   double loopRate;  // Variable to store input frequency
@@ -103,15 +108,24 @@ int main(int argc, char **argv) {
 
   int count = 0;
   while (ros::ok()) {
+    // A new string message
     std_msgs::String msg;
 
     std::stringstream ss;
     ss << newMsg << count;
     msg.data = ss.str();
 
+    // Displaying the message
     ROS_INFO("%s", msg.data.c_str());
 
+    // Publishing the message
     chatter_pub.publish(msg);
+
+    // Setting origin, orientation for the frame and broadcating the tf
+    transform.setOrigin(tf::Vector3(15.0, 10.0, 5.0));
+    q.setRPY(2, 6, 1);
+    transform.setRotation(q);
+    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", "talk"));
 
     ros::spinOnce();
 
