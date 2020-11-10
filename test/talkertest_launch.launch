@@ -1,0 +1,10 @@
+<launch>
+    <arg name="set_freq" default="10" doc="set_freq"
+    />
+    <param name="set_freq" value="$(arg set_freq)"
+    />
+    <node pkg="beginner_tutorials" name="pub_talker" type="talker"
+    />
+    <test pkg="beginner_tutorials" test-name="talkertest" type="talkertest"
+    />
+</launch>
