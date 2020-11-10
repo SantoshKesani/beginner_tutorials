@@ -48,16 +48,18 @@
  */
 TEST(TestTalkerNode, checkServiceInitialization) {
   ros::NodeHandle nh;
-  ros::ServiceClient client = nh.serviceClient<beginner_tutorials::updateService>("new_string");
+  ros::ServiceClient client = nh.serviceClient<beginner_tutorials\
+     ::updateService>("new_string");
   EXPECT_TRUE(client.waitForExistence(ros::Duration(10)));
 }
 
 /**
  * @brief A test to check the broadcast of tf frame
  */
-TEST(tf, setTransformNoInsertWithNoFrameID) { 
+TEST(tf, setTransformNoInsertWithNoFrameID) {
   tf::Transformer mTR(true);
-  tf::StampedTransform tranStamped(tf::Transform(tf::Quaternion(0,0,0,1), tf::Vector3(0,0,0)), ros::Time().fromNSec(10.0), "world", "");
+  tf::StampedTransform tranStamped(tf::Transform(tf::Quaternion(0, 0, 0, 1), \
+    tf::Vector3(0, 0, 0)), ros::Time().fromNSec(10.0), "world", "");
   EXPECT_FALSE(mTR.setTransform(tranStamped));
 }
 

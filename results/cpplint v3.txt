@@ -1,0 +1,18 @@
+Run the following command:
+
+cpplint $( find . -name \*.h -or -name \*.cpp | grep -vE -e "^./build/" -e "^./vendor/" -e "^./docs/" -e "^./results" )
+
+
+Output:
+
+Done processing ./src/listener.cpp
+./src/talker.cpp:43:  Found C system header after other header. Should be: talker.h, c system, c++ system, other.  [build/include_order] [4]
+./src/talker.cpp:55:  Is this a non-const reference? If so, make const or use a pointer: beginner_tutorials::updateService::Request &req  [runtime/references] [2]
+./src/talker.cpp:56:  Is this a non-const reference? If so, make const or use a pointer: beginner_tutorials::updateService::Response &res  [runtime/references] [2]
+Done processing ./src/talker.cpp
+./test/talkertest.cpp:39:  Found C system header after other header. Should be: talkertest.h, c system, c++ system, other.  [build/include_order] [4]
+./test/talkertest.cpp:40:  Found C system header after other header. Should be: talkertest.h, c system, c++ system, other.  [build/include_order] [4]
+./test/talkertest.cpp:43:  Found C system header after other header. Should be: talkertest.h, c system, c++ system, other.  [build/include_order] [4]
+Done processing ./test/talkertest.cpp
+Total errors found: 6
+

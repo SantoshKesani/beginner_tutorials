@@ -125,7 +125,8 @@ int main(int argc, char **argv) {
     transform.setOrigin(tf::Vector3(15.0, 10.0, 5.0));
     q.setRPY(2, 6, 1);
     transform.setRotation(q);
-    br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", "talk"));
+    br.sendTransform(tf::StampedTransform(\
+                     transform, ros::Time::now(), "world", "talk"));
 
     ros::spinOnce();
 
